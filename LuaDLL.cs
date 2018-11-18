@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace com.tencent.pandora
 {
@@ -9,11 +10,11 @@ namespace com.tencent.pandora
     [StructLayout(LayoutKind.Sequential)]
     public struct LuaDebug
     {
-        public int eventId;
-        public string name;
-        public string nameWhat;
-        public string what;
-        public string source;
+        public int eventCode;
+        public IntPtr name;
+        public IntPtr nameWhat;
+        public IntPtr what;
+        public IntPtr source;
 
         public int currentLine;
         public int upvalueNumbers;
@@ -21,9 +22,39 @@ namespace com.tencent.pandora
         public int lastlineDefined;
         //数组
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public char[] shortSource;
+        public byte[] shortSource;
+
         int activeFunctionId;
+
+        //name,nameWhat,what,source 转化为字符串时需将其压入堆栈,通过接口 pua_tostring来获取字符串
+        int GetShortSourceLength( byte[] byteArray )
+        {
+            int i = 0;
+            for (; i < 256; i++)
+            {
+                if (byteArray[i] == '\0')
+                {
+                    return i;
+                }
+            }
+            return i;
+        }
+
+        public string ShortSource
+        {
+            get
+            {
+                if (shortSource == null)
+                {
+                    return string.Empty;
+                }
+                int count = GetShortSourceLength(shortSource);
+                return Encoding.UTF8.GetString(shortSource, 0, count);
+            }
+        }
+
     }
+
     public class MonoPInvokeCallbackAttribute : System.Attribute
     {
         private Type type;
