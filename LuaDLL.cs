@@ -21,7 +21,7 @@ namespace com.tencent.pandora
         public int lineDefined;
         public int lastlineDefined;
         //数组
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public byte[] shortSource;
 
         int activeFunctionId;
