@@ -267,7 +267,7 @@ namespace com.tencent.pandora
             return null;
 
         }
-
+        //更新对象
         internal void setBack(IntPtr l, int p, object o)
         {
 

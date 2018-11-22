@@ -26,6 +26,24 @@ namespace com.tencent.pandora
     using System;
     using System.Reflection;
 
+    public class LuaSentry : LuaObject
+    {
+        private string _name;
+        public LuaSentry(string name)
+        {
+            _name = name;
+        }
+
+        public override string ToString()
+        {
+            return "[LuaSentry]: " + _name;
+        }
+
+        ~LuaSentry()
+        {
+        }
+    }
+
     class Helper : LuaObject
     {
 
@@ -371,6 +389,23 @@ return Class
             return 2;
         }
 
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        public static int CreateSentry(IntPtr l)
+        {
+            try
+            {
+                string name;
+                checkType(l, 1, out name);
+                pushValue(l, true);
+                LuaObject.pushObject(l, new LuaSentry(name));
+                return 2;
+            }
+            catch (Exception e)
+            {
+                return error(l, e);
+            }
+        }
+
         static public void reg(IntPtr l)
         {
             getTypeTable(l, "Slua");
@@ -383,6 +418,7 @@ return Class
             addMember(l, IsNull, false);
             addMember(l, MakeArray, false);
             addMember(l, ToBytes, false);
+            addMember(l, CreateSentry, false);
             addMember(l, "out", get_out, null, false);
             addMember(l, "version", get_version, null, false);
 

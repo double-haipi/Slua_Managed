@@ -96,7 +96,7 @@ namespace com.tencent.pandora
                 valueref = 0;
             }
         }
-
+        //获取luavar 关联的lua对象
         public void push(IntPtr l)
         {
             LuaDLL.pua_getref(l, valueref);
@@ -580,7 +580,6 @@ namespace com.tencent.pandora
 
             refQueue = new Queue<UnrefPair>();
             ObjectCache.make(L);
-
             LuaDLL.pua_atpanic(L, panicCallback);
 
             LuaDLL.puaL_openlibs(L);
